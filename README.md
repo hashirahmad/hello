@@ -2,9 +2,9 @@
 
 Features:
 
-- API documentation integrated via `apidoc` package. See `/src/apis/hello` for a quick example
+- API documentation integrated via `apidoc` package. See [`/src/apis/hello`](/src/apis/hello/index.ts) for a quick example
 - `eslint` and `prettier` built in so the code feels accordingly
-- Automatic API registration dynamically ~ APIs are defined according to `/src/apis` folder
+- Automatic API registration dynamically ~ APIs are defined according to [`/src/apis`](/src/apis/) folder
 - Strict type checking for `config`
 
 ## How to use?
