@@ -36,11 +36,14 @@ class router {
                     .replace(/index/g, '')
                 if (api.get) {
                     this.router.get(routePath, api.get)
-                } else if (api.post) {
+                }
+                if (api.post) {
                     this.router.post(routePath, api.post)
-                } else if (api.put) {
+                }
+                if (api.put) {
                     this.router.put(routePath, api.put)
-                } else if (api.delete) {
+                }
+                if (api.delete) {
                     this.router.delete(routePath, api.delete)
                 }
             }
@@ -52,7 +55,6 @@ class router {
      * API docs. The `/healthz` is required for K8s deployments.
      */
     private requiredAPIs() {
-        this.router.get('/', (req, res) => res.status(301).redirect('docs'))
         this.router.get('/healthz', (req, res) => res.status(200).send('ok'))
     }
 

@@ -8,6 +8,8 @@ import helmet from './middlewares/helmet'
 import path from 'path'
 import { createDoc } from 'apidoc'
 import config from './config'
+require('express-async-errors')
+import errorHandling from './middlewares/errorHandling'
 
 class App {
     private port: number
@@ -18,8 +20,23 @@ class App {
         this.app = express()
     }
 
+    /**
+     * This must be done last i.e. no more
+     * use of `app.use(...)` afterwards. The
+     * `errorHandling` will not work otherwise.
+     */
     private initMiddlewares() {
-        const middlewares = [...cors, ...helmet, ...bodyParsing, ...docs]
+        const middlewares = [
+            ...cors,
+            ...helmet,
+            ...bodyParsing,
+            ...docs,
+            /**
+             * This must be done as THE LAST middleware. Otherwise
+             * error handling will not work.
+             */
+            ...errorHandling,
+        ]
         this.app.use(middlewares)
     }
 
@@ -37,10 +54,10 @@ class App {
     }
 
     public async run() {
-        this.initMiddlewares()
         router.setUp()
         this.generateApiDocs()
         this.app.use('/', router.router)
+        this.initMiddlewares()
         this.app.listen(this.port, () => {
             console.log(`Listening on port ${this.port}`)
         })

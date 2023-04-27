@@ -4,10 +4,10 @@
   "description": "API development with nodejs, express and typescript from scratch — Project Starter",
   "main": "src/app.ts",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "NODE_ENV=development nodemon",
     "build": "tsc && tsc-alias",
     "build:swc": "swc src -d dist --source-maps --copy-files",
-    "start": "npm run build:swc && node dist/app.js",
+    "start": "NODE_ENV=production npm run build:swc && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -25,6 +25,7 @@
     "dotenv": "^16.0.3",
     "envalid": "^7.3.1",
     "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "helmet": "^6.0.1"
   },
   "devDependencies": {
