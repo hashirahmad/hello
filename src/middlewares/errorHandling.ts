@@ -1,4 +1,5 @@
 import { httpCode, ApiError } from '@/utils/apiError'
+import logger from '@/utils/logger'
 import { Request, Response, NextFunction } from 'express'
 
 class ErrorHandling {
@@ -22,9 +23,14 @@ class ErrorHandling {
      * This is where we handle those unexpected errors like `Error`. It could be
      * anything we are not deliberately throwing ourselves.
      */
-    private handleCriticalError(err: Error | ApiError, response?: Response): void {
+    private handleCriticalError(
+        err: Error | ApiError,
+        response?: Response,
+    ): void {
         if (response) {
-            response.status(httpCode.INTERNAL_SERVER_ERROR).json({ message: 'Uh-oh! We just encountered a hiccup . . .' })
+            response
+                .status(httpCode.INTERNAL_SERVER_ERROR)
+                .json({ message: 'Uh-oh! We just encountered a hiccup . . .' })
         } else {
             console.log('Application encountered a critical error. Exiting')
             process.exit(1)
@@ -32,10 +38,17 @@ class ErrorHandling {
     }
 
     /** Handle the actual error and deals with it appropriately */
-    public handle(err: Error | ApiError, req: Request, res: Response, next: NextFunction): void {
+    public handle(
+        err: Error | ApiError,
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ): void {
         if (this.isTrustedError(err) && res) {
+            logger.info(`ApiError •`, err)
             this.handleTrustedError(err as ApiError, res)
         } else {
+            logger.err(err.message, err)
             this.handleCriticalError(err, res)
         }
     }
@@ -43,8 +56,13 @@ class ErrorHandling {
 
 const errHandling = new ErrorHandling()
 
-function handle(err: Error | ApiError, req: Request, res: Response, next: NextFunction): void {
-    errHandling.handle(err, req, res, next)
-}
-
-export default [handle]
+export default [
+    (
+        err: Error | ApiError,
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        errHandling.handle(err, req, res, next)
+    },
+]
